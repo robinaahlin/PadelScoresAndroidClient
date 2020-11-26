@@ -8,24 +8,20 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
-
-/**
- * When creating new socket localhost is used, only work when working with emulator.
- * Change this when testing on phone irl.
- */
 public class LoginAsyncTask extends AsyncTask<Void, Void, Void> {
 
-    private String username, password, response = null;
+    private String action, username, password, response = null;
 
     private OnTaskCompleted listener;
+    private boolean socketConnectionError = false;
 
-    private Socket newSocket;
-
-    public LoginAsyncTask(OnTaskCompleted listener, String username, String password){
+    public LoginAsyncTask(OnTaskCompleted listener, String action, String username, String password){
         this.listener=listener;
+        this.action = action;
         this.username = username;
         this.password = password;
     }
@@ -34,20 +30,27 @@ public class LoginAsyncTask extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
 
         try {
-            // Change the IP address from localhost when not using emulator
-            InetAddress inetAddress = InetAddress.getLocalHost();
-            newSocket = new Socket(inetAddress.getHostAddress(), 3308);
-            SocketHandler.setSocket(newSocket);
+            String serverName = "192.168.1.78";
+            int port = 3308;
+            InetSocketAddress inetSocketAddress = new InetSocketAddress(serverName,port);
+            Socket socket = new Socket();
 
-            PrintWriter write = new PrintWriter(newSocket.getOutputStream(), true);
-            BufferedReader read = new BufferedReader(new InputStreamReader(newSocket.getInputStream()));
+            // If no response from server within 1000 ms an SocketTimeoutException occurs.
+            socket.connect(inetSocketAddress,1000);
+            SocketHandler.setSocket(socket);
+
+            PrintWriter write = new PrintWriter(socket.getOutputStream(), true);
+            BufferedReader read = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             System.out.println(read.readLine());
+            write.println(action);
             write.println(username);
             write.println(password);
             response = read.readLine();
-            System.out.println("THIS IS THE RESPONSE: " + response);
 
+        } catch (SocketTimeoutException e) {
+            socketConnectionError = true;
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -55,10 +58,14 @@ public class LoginAsyncTask extends AsyncTask<Void, Void, Void> {
     }
 
     protected void onPostExecute(Void param) {
-        if(response.contains("SUCCESS")) {
-            listener.onTaskCompleted("SUCCESS");
+        if(!socketConnectionError) {
+            if (response.contains("SUCCESS")) {
+                listener.onTaskCompleted("SUCCESS");
+            } else {
+                listener.onTaskCompleted("FAILED");
+            }
         } else {
-            listener.onTaskCompleted("FAILED");
+            listener.serverConnectionError();
         }
     }
 }

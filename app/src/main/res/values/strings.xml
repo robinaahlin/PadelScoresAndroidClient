@@ -4,4 +4,13 @@
     <string name="title_password">Password</string>
     <string name="title_login">Login</string>
     <string name="add_new_user">Add New User</string>
+    <string name="server_connection_error_header">Server Connection Error!</string>
+    <string name="ok">OK</string>
+    <string name="show_points">SHOW POINTS</string>
+    <string name="tmp_button">Temp button</string>
+    <string name="show_users">SHOW USERS</string>
+    <string name="add_score">Add Score</string>
+    <string name="tmp">TEMP</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
 </resources>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_alert_dialog"
+    android:background="@drawable/bg_square_black_lined"
+    android:textColor="@color/colorTextBlack"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/textView_server_connection_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/server_connection_error_header"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/btnTextOk"
+        android:background="@drawable/bg_btn_confirm"
+        android:textColor="@color/colorTextBlack"
+        android:text="@string/ok"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:clickable="true"
+        android:focusable="true"
+
+        android:layout_gravity="end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="50dp" />
+</LinearLayout>
